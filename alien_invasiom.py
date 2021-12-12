@@ -1,5 +1,7 @@
 import sys
 
+from pygame.sprite import Group
+
 import pygame
 
 from settings import Settings
@@ -18,13 +20,23 @@ def run_game():
     
     # Make a ship.
     ship = Ship(ai_settings, screen)
+    # Make a group to store bullets in
+    bullets = Group()
 
     # Start the main loop for the game.
     while True:
         
-        gf.check_events(ship)
+        gf.check_events(ai_settings, screen, ship, bullets)
         ship.update()
-        gf.update_screen(ai_settings, screen, ship)
+        bullets.update()
+        
+        # Get rid of bullets thad have disappeared
+        for bullet in bullets.copy():
+            if bullet.rect.bottom <= 0:
+                bullets.remove(bullet)
+                print(len(bullets)) #For test
+
+        gf.update_screen(ai_settings, screen, ship, bullets)
         
 run_game()
 
